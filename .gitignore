@@ -5,3 +5,5 @@
 /.vs
 /SymulowaneWyzarzanie/obj
 /SymulowaneWyzarzanie/bin/Debug/netcoreapp3.1
+/Schedule/bin/Debug/net6.0
+/Schedule/obj
