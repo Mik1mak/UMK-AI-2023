@@ -6,7 +6,7 @@ namespace SymulowaneWyzarzanie
     {
         static void Main(string[] args)
         {
-            SimulatedAnnealing problem = new SimpleSimulatedAnnealing(x => x * x, 10, 5);
+            SimulatedAnnealingBase<double> problem = new SimpleSimulatedAnnealing(x => x * x, 10, 5);
             Console.WriteLine($"Najlepsze rozwiązanie f(x)=x^2: {problem.FindBestSolution()} znalezione w {problem.Iteration} iteracji");
         }
     }

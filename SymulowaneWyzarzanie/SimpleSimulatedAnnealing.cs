@@ -2,7 +2,7 @@
 
 namespace SymulowaneWyzarzanie
 {
-    public class SimpleSimulatedAnnealing : SimulatedAnnealing
+    public class SimpleSimulatedAnnealing : SimulatedAnnealingBase<double>
     {
         private const int INITIAL_TEMPERATURE = 100;
         private const int FIXED_TEMPERATURE_LENGTH = 1;
@@ -10,13 +10,15 @@ namespace SymulowaneWyzarzanie
 
         protected readonly Random random = new Random();
         protected readonly Func<double, double> objectiveFunction;
-        protected readonly int fixedTemperatureLength;
+
+        public double Neighbourhood { get; }
+        protected double Temperature { get; set; }
 
         public SimpleSimulatedAnnealing(Func<double, double> objectiveFunction,
-            double neighbourhood, double initialSolution) : base(neighbourhood, initialSolution)
+            double neighbourhood, double initialSolution) : base(initialSolution)
         {
             this.objectiveFunction = objectiveFunction;
-
+            Neighbourhood = neighbourhood;
             Temperature = INITIAL_TEMPERATURE;
         }
 
@@ -27,12 +29,12 @@ namespace SymulowaneWyzarzanie
 
         protected override double ExplorationCriterion()
         {
-            double temp = random.NextDouble() * Neighbourhood;
+            double x = random.NextDouble() * Neighbourhood;
 
             if (random.Next(0, 2) == 1)
-                return CurrentSolution + temp;
+                return CurrentSolution + x;
             
-            return CurrentSolution - temp;
+            return CurrentSolution - x;
         }
 
         protected override bool AcceptanceCriterion(double candidateSolution)

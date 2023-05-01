@@ -1,26 +1,23 @@
 ﻿namespace SymulowaneWyzarzanie
 {
-    public abstract class SimulatedAnnealing
+    public abstract class SimulatedAnnealingBase<T>
     {
-        protected double CurrentSolution { get; private set; }
-        protected double BestSolution { get; private set; }
-        protected double Temperature { get; set; }
+        protected T CurrentSolution { get; private set; }
+        protected T BestSolution { get; private set; }
 
         public int Iteration { get; private set; } = 0;
-        public double InitialSolution { get; }
-        public double Neighbourhood { get; }
+        public T InitialSolution { get; }
 
-        protected SimulatedAnnealing(double neighbourhood, double initialSolution)
+        protected SimulatedAnnealingBase(T initialSolution)
         {
-            Neighbourhood = neighbourhood;
             BestSolution = CurrentSolution = InitialSolution = initialSolution;
         }
 
-        public double FindBestSolution()
+        public T FindBestSolution()
         {
             while(!StoppingCriterion())
             {
-                double candidateSolution = ExplorationCriterion();
+                T candidateSolution = ExplorationCriterion();
 
                 if(AcceptanceCriterion(candidateSolution))
                 {
@@ -41,9 +38,9 @@
         }
 
         protected abstract bool StoppingCriterion();
-        protected abstract double ExplorationCriterion();
-        protected abstract bool AcceptanceCriterion(double candidateSolution);
-        protected abstract bool ImprovesOverBest(double candidateSolution);
+        protected abstract T ExplorationCriterion();
+        protected abstract bool AcceptanceCriterion(T candidateSolution);
+        protected abstract bool ImprovesOverBest(T candidateSolution);
         protected abstract bool TemperatureLength();
         protected abstract void CoolingScheme();
         protected abstract void TemperatureRestart();
