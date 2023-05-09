@@ -5,7 +5,9 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SymulowaneWyzarzanie", "SymulowaneWyzarzanie\SymulowaneWyzarzanie.csproj", "{6386C04B-7463-4FE2-B3FC-FC002984C8C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Schedule", "Schedule\Schedule.csproj", "{BD354DE3-E69D-4CFB-A173-7DCF5D6C420A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Schedule", "Schedule\Schedule.csproj", "{BD354DE3-E69D-4CFB-A173-7DCF5D6C420A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InferNet1", "InferNet1\InferNet1.csproj", "{34FBFD1F-D729-4704-8985-1FE0883A2964}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{BD354DE3-E69D-4CFB-A173-7DCF5D6C420A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD354DE3-E69D-4CFB-A173-7DCF5D6C420A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD354DE3-E69D-4CFB-A173-7DCF5D6C420A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34FBFD1F-D729-4704-8985-1FE0883A2964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34FBFD1F-D729-4704-8985-1FE0883A2964}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34FBFD1F-D729-4704-8985-1FE0883A2964}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34FBFD1F-D729-4704-8985-1FE0883A2964}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
