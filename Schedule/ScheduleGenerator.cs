@@ -73,7 +73,9 @@ namespace Schedule
         // tworzy nowy harmonogram na podstawie istniejacego podajac zadania w losowej kolejnosci ktora uwzglednia aktualne polozenie i sasiedztwo
         public static Schedule GenerateSchedule(Schedule schedule, Random rng, int neighbourhood)
             => GenerateSchedule(
-                schedule.Where(j => !j.HasNextJob).OrderBy(j => j.Start + rng.Next(-neighbourhood, neighbourhood)).Select(j => Job.NewUnasignedJob(j)),
+                schedule.Where(j => !j.HasNextJob)
+                    .OrderBy(j => j.Start + rng.Next(-neighbourhood, neighbourhood))
+                    .Select(j => Job.NewUnasignedJob(j)),
                 schedule.Processors.Length, rng);
 
 
@@ -95,12 +97,36 @@ namespace Schedule
             // upewnia sie ze spelniony jest warunek f(J) + W(J) <= f(J'), w przeciwnym przypadku probuje przypisac zadanie do innego procesora
             while (job.PreviousJob?.End > job.Start.Value)
             {
-                job.ProcessorIndex = (job.ProcessorIndex + random.Next(1, schedule.Processors.Length)) % schedule.Processors.Length;
-                job.Start = schedule.Processors[job.ProcessorIndex.Value];
+                job.ProcessorIndex = (job.ProcessorIndex + 1) % schedule.Processors.Length;
+                job.Start = schedule.Processors[job.ProcessorIndex.Value];// + (random.Next(0, 5) == 1 ? random.Next(0, 3) : 0);
             }
 
             schedule.AddJob(job);
         }
 
+
+        public static List<Job> ReadJobsFromFile(string path)
+        {
+            string[] lines = File.ReadAllLines(path);
+            var jobs = new List<Job>();
+
+            foreach (string durationOfJob in lines[0].Split(','))
+                jobs.Add(new Job()
+                {
+                    Duration = int.Parse(durationOfJob),
+                });
+
+            foreach (string dependency in lines.Skip(1))
+            {
+                string[] parts = dependency.Split(',');
+                int previousJobIndex = int.Parse(parts[0]);
+                int nextJobIndex = int.Parse(parts[1]);
+
+                jobs[previousJobIndex].HasNextJob = true;
+                jobs[nextJobIndex].PreviousJob = jobs[previousJobIndex];
+            }
+
+            return jobs;
+        }
     }
 }

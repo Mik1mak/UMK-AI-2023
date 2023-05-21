@@ -1,7 +1,14 @@
-﻿namespace SymulowaneWyzarzanie
+﻿using System;
+using System.Diagnostics;
+
+namespace SymulowaneWyzarzanie
 {
     public abstract class SimulatedAnnealingBase<T>
     {
+        protected readonly Stopwatch stopwatch = new Stopwatch();
+
+        public TimeSpan Duration => stopwatch.Elapsed;
+
         protected T CurrentSolution { get; private set; }
         protected T BestSolution { get; private set; }
 
@@ -15,6 +22,8 @@
 
         public T FindBestSolution()
         {
+            stopwatch.Start();
+
             while(!StoppingCriterion())
             {
                 T candidateSolution = ExplorationCriterion();
@@ -34,6 +43,8 @@
 
                 Iteration++;
             }
+
+            stopwatch.Stop();
             return BestSolution;
         }
 
