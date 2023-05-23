@@ -9,3 +9,6 @@
 /Schedule/obj
 /InferNet1/bin/Debug/net6.0
 /InferNet1/obj
+/Matches/obj
+/Matches/bin/Debug/netcoreapp3.1
+/Matches/.vs
