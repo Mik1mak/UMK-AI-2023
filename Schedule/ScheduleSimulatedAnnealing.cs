@@ -10,8 +10,8 @@ namespace Schedule
 
         protected readonly Random random;
 
-        private readonly int maxIterations;
         private readonly double initialTemperature;
+        private readonly TimeSpan maxTime;
 
         protected double Temperature { get; set; }
         protected int Neighbourhood { get; set; }
@@ -19,7 +19,7 @@ namespace Schedule
         public string Name => nameof(ScheduleSimulatedAnnealing);
 
         public ScheduleSimulatedAnnealing(int maxJobsDuration,
-            Schedule initialSolution, Random? rng = null, int maxIterations = 10_000) : base(initialSolution)
+            Schedule initialSolution, TimeSpan maxTime, Random? rng = null) : base(initialSolution)
         {
             if (rng == null)
                 random = new Random();
@@ -27,8 +27,8 @@ namespace Schedule
                 random = rng;
             
             Neighbourhood = maxJobsDuration / 2;
-            this.maxIterations = maxIterations;
             Temperature = initialTemperature = INITIAL_TEMPERATURE_MULTIPLIER * maxJobsDuration;
+            this.maxTime = maxTime;
         }
 
         private static int ObjectiveFunction(Schedule schedule) => schedule.MaxTime;
@@ -53,25 +53,25 @@ namespace Schedule
             return ScheduleGenerator.GenerateSchedule(CurrentSolution, random, Neighbourhood);
         }
 
-        private int lastImproveIteration = 0;
+        private DateTime lastImprove;
         protected override bool ImprovesOverBest(Schedule candidateSolution)
         {
             bool result = ObjectiveFunction(candidateSolution) < ObjectiveFunction(BestSolution);
 
             if (result)
-                lastImproveIteration = Iteration;
+                lastImprove = DateTime.Now;
 
             return result;
         }
 
         protected override bool StoppingCriterion()
         {
-            if (Iteration % (maxIterations / 80) == 0)
+            if (Iteration % 1000 == 0)
                 Console.WriteLine($"Iteration: {Iteration};" +
                     $" current solution: {ObjectiveFunction(CurrentSolution)} time units;" +
                     $" elapsed time: {Duration.TotalMilliseconds}ms");
 
-            return Iteration == maxIterations;
+            return Duration > maxTime;
         }
 
         private int l = 0;
@@ -82,9 +82,11 @@ namespace Schedule
 
         protected override void TemperatureRestart()
         {
-            if (Iteration - lastImproveIteration >= maxIterations * 5 / 6)
+            DateTime now = DateTime.Now;
+
+            if (now - lastImprove >= (maxTime * 5 / 6))
             {
-                lastImproveIteration = Iteration;
+                lastImprove = now;
                 Temperature = initialTemperature / 5;
                 Console.WriteLine("Reset Temperature");
             }

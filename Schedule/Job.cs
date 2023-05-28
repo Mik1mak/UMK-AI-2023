@@ -1,6 +1,6 @@
 ﻿namespace Schedule
 {
-    class Job
+    public class Job
     {
         // poprzednie zadanie, ktore musi spelniac: this.Start.Value >= previousJob.End
         public Job? PreviousJob { get; set; }

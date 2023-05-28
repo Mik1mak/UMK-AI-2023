@@ -11,7 +11,7 @@ internal class OnlyBetterScheduleExplorer : ISolutionExplorer<Schedule>
 {
     private readonly Stopwatch stopwatch = new Stopwatch();
     private readonly Schedule initialSchedule;
-    private readonly int maxIter;
+    private readonly TimeSpan maxTime;
     private readonly int neighbourhood;
     private readonly Random rng;
 
@@ -20,10 +20,10 @@ internal class OnlyBetterScheduleExplorer : ISolutionExplorer<Schedule>
 
     public string Name => nameof(OnlyBetterScheduleExplorer);
 
-    public OnlyBetterScheduleExplorer(int maxJobsDuration, Schedule initialSchedule, Random rng, int maxIter = 10_000)
+    public OnlyBetterScheduleExplorer(int maxJobsDuration, Schedule initialSchedule, TimeSpan maxTime, Random rng)
     {
         this.initialSchedule = initialSchedule;
-        this.maxIter = maxIter;
+        this.maxTime = maxTime;
         this.rng = rng;
         neighbourhood = maxJobsDuration / 2;
     }
@@ -34,7 +34,7 @@ internal class OnlyBetterScheduleExplorer : ISolutionExplorer<Schedule>
 
         Schedule bestSolution = initialSchedule;
         int minMaxT = bestSolution.MaxTime;
-        for (int i = 0; i < maxIter; i++)
+        while(Duration < maxTime)
         {
             Schedule schedule = ScheduleGenerator.GenerateSchedule(initialSchedule, rng, neighbourhood);
 

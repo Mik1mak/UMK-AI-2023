@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="GeneticSharp" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\SymulowaneWyzarzanie\SymulowaneWyzarzanie.csproj" />
   </ItemGroup>
 

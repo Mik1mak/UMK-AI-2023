@@ -6,16 +6,18 @@
         static void Main(string[] args)
         {
         #if DEBUG
-            args = new[] { "4", "80", "input.txt", "150", "100"};
+            args = new[] { "4", "1000", "150", "100"};
+            //args = new[] { "4", "15", "input.txt", "150", "100"};
         #endif
 
             var scoreTable = new Dictionary<string, int>()
             {
                 [nameof(ScheduleSimulatedAnnealing)] = 0,
                 [nameof(OnlyBetterScheduleExplorer)] = 0,
+                [nameof(GeneticScheduleExplorer)] = 0,
             };
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
                TestSolutions(args, scoreTable);
             
             Console.WriteLine();
@@ -32,10 +34,9 @@
         {
             // odczytywanie parametrów
             IEnumerable<Job> inputJobs;
-            Random rng;
-            int numberOfJobs, maxJobsDuration, maxIter, seed;
+            int numberOfJobs, maxJobsDuration, seed;
             int numberOfProcessors = int.Parse(args.ElementAtOrDefault(0) ?? "4");
-            maxIter = int.Parse(args.ElementAtOrDefault(1) ?? "30000");
+            TimeSpan maxTime = TimeSpan.FromMilliseconds(int.Parse(args.ElementAtOrDefault(1) ?? "2"));
 
             if (File.Exists(args.ElementAtOrDefault(2)))
             {
@@ -45,14 +46,13 @@
                 numberOfJobs = jobs.Count;
                 maxJobsDuration = jobs.Max(job => job.Duration);
                 seed = Guid.NewGuid().GetHashCode();
-                rng = new Random(seed);
             }
             else
             {
                 numberOfJobs = int.Parse(args.ElementAtOrDefault(2) ?? "150");
                 maxJobsDuration = int.Parse(args.ElementAtOrDefault(3) ?? "100");
                 seed = int.Parse(args.ElementAtOrDefault(4) ?? Guid.NewGuid().GetHashCode().ToString());
-                rng = new Random(seed);
+                Random rng = new Random(seed);
 
                 // generowanie danych wejściowych
                 inputJobs = ScheduleGenerator
@@ -64,19 +64,20 @@
             Console.WriteLine($"\tnumber of jobs: {numberOfJobs}");
             Console.WriteLine($"\tnumber of processors: {numberOfProcessors}");
             Console.WriteLine($"\tmax jobs duration: {maxJobsDuration}");
-            Console.WriteLine($"\tmax iterations: {maxIter}");
+            Console.WriteLine($"\tmax time per exploration: {maxTime.TotalMilliseconds}ms");
             Console.WriteLine($"\tseed: {seed}\n");
 
             // układanie początkowego harmonogramu
-            Schedule initialSchedule = ScheduleGenerator.GenerateSchedule(inputJobs, numberOfProcessors, rng);
+            Schedule initialSchedule = ScheduleGenerator.GenerateSchedule(inputJobs, numberOfProcessors);
             Console.WriteLine($"Initial schedule has {initialSchedule.MaxTime} execution time units");
             Console.WriteLine();
 
             // definicja obiektów klas poszukujących rozwiązania
             var explorers = new List<ISolutionExplorer<Schedule>>()
             {
-                new ScheduleSimulatedAnnealing(maxJobsDuration, initialSchedule, new Random(seed), maxIter),
-                new OnlyBetterScheduleExplorer(maxJobsDuration, initialSchedule, new Random(seed), maxIter),
+                new ScheduleSimulatedAnnealing(maxJobsDuration, initialSchedule, maxTime, new Random(seed)),
+                new OnlyBetterScheduleExplorer(maxJobsDuration, initialSchedule, maxTime, new Random(seed)),
+                new GeneticScheduleExplorer(initialSchedule, maxTime),
             };
 
             // wyznaczanie najlepszych rozwiązań
@@ -89,6 +90,11 @@
                     $" has {bestSolution.MaxTime} execution time units." +
                     $" Elapsed time: {explorer.Duration.TotalMilliseconds}ms");
                 bestSolutions.Add(explorer.Name, bestSolution);
+
+            #if DEBUG
+                if (bestSolution.Validate(initialSchedule.SumOfDurations))
+                    throw new Exception($"Explorer {explorer} works wrong.");
+            #endif
             }
 
             // inkrementacja "punktów" dla najlepszych rozwiązań

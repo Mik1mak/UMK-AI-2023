@@ -2,10 +2,13 @@
 
 namespace Schedule
 {
-    class Schedule : IEnumerable<Job>
+    public class Schedule : IEnumerable<Job>
     {
         // zbior zadan w harmonogramie, nie zawiera duplikatow
         private readonly HashSet<Job> jobs;
+
+        // liczba zadań w harmonogramie
+        public int NumberOfJobs => jobs.Count;
 
         // dlugosc tablicy odpowiada ilosci procesorow - k, a wartosc zapisana pod konkrentym indeksem reprezentuje koniec ostatniego z przypisanych zadan
         public int[] Processors { get; }
@@ -24,13 +27,13 @@ namespace Schedule
 
         public void AddJob(Job job)
         {
-#if DEBUG
+        #if DEBUG
             if (job.ProcessorIndex == null || job.Start == null)
                 throw new ArgumentException(nameof(job));
 
             if (Processors[job.ProcessorIndex.Value] > job.Start.Value)
                 throw new InvalidOperationException();
-#endif
+        #endif
             Processors[job.ProcessorIndex.Value] = job.End;
 
             jobs.Add(job);
