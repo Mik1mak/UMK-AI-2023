@@ -25,7 +25,7 @@ internal class OnlyBetterScheduleExplorer : ISolutionExplorer<Schedule>
         this.initialSchedule = initialSchedule;
         this.maxTime = maxTime;
         this.rng = rng;
-        neighbourhood = maxJobsDuration / 2;
+        neighbourhood = Math.Max(maxJobsDuration / 50, 2);
     }
 
     public Schedule FindBestSolution()

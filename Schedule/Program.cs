@@ -6,8 +6,8 @@
         static void Main(string[] args)
         {
         #if DEBUG
-            args = new[] { "4", "1000", "150", "100"};
-            //args = new[] { "4", "15", "input.txt", "150", "100"};
+           args = new[] { "4", "1000", "150", "100"};
+           // args = new[] { "4", "20", "input.txt", "150", "100"};
         #endif
 
             var scoreTable = new Dictionary<string, int>()
@@ -34,7 +34,7 @@
         {
             // odczytywanie parametrów
             IEnumerable<Job> inputJobs;
-            int numberOfJobs, maxJobsDuration, seed;
+            int numberOfJobs, maxJobDuration, seed;
             int numberOfProcessors = int.Parse(args.ElementAtOrDefault(0) ?? "4");
             TimeSpan maxTime = TimeSpan.FromMilliseconds(int.Parse(args.ElementAtOrDefault(1) ?? "2"));
 
@@ -44,26 +44,26 @@
                 List<Job> jobs = ScheduleGenerator.ReadJobsFromFile(args[2]);
                 inputJobs = jobs;
                 numberOfJobs = jobs.Count;
-                maxJobsDuration = jobs.Max(job => job.Duration);
+                maxJobDuration = jobs.Max(job => job.Duration);
                 seed = Guid.NewGuid().GetHashCode();
             }
             else
             {
                 numberOfJobs = int.Parse(args.ElementAtOrDefault(2) ?? "150");
-                maxJobsDuration = int.Parse(args.ElementAtOrDefault(3) ?? "100");
+                maxJobDuration = int.Parse(args.ElementAtOrDefault(3) ?? "100");
                 seed = int.Parse(args.ElementAtOrDefault(4) ?? Guid.NewGuid().GetHashCode().ToString());
                 Random rng = new Random(seed);
 
                 // generowanie danych wejściowych
                 inputJobs = ScheduleGenerator
-                    .GenerateInputData(numberOfJobs, rng, maxJobsDuration)
+                    .GenerateInputData(numberOfJobs, rng, maxJobDuration)
                     .OrderBy(x => rng.NextDouble());
             }
 
             Console.WriteLine("Parameters:");
             Console.WriteLine($"\tnumber of jobs: {numberOfJobs}");
             Console.WriteLine($"\tnumber of processors: {numberOfProcessors}");
-            Console.WriteLine($"\tmax jobs duration: {maxJobsDuration}");
+            Console.WriteLine($"\tmax single job duration: {maxJobDuration}");
             Console.WriteLine($"\tmax time per exploration: {maxTime.TotalMilliseconds}ms");
             Console.WriteLine($"\tseed: {seed}\n");
 
@@ -75,8 +75,8 @@
             // definicja obiektów klas poszukujących rozwiązania
             var explorers = new List<ISolutionExplorer<Schedule>>()
             {
-                new ScheduleSimulatedAnnealing(maxJobsDuration, initialSchedule, maxTime, new Random(seed)),
-                new OnlyBetterScheduleExplorer(maxJobsDuration, initialSchedule, maxTime, new Random(seed)),
+                new ScheduleSimulatedAnnealing(maxJobDuration, initialSchedule, maxTime, new Random(seed)),
+                new OnlyBetterScheduleExplorer(maxJobDuration, initialSchedule, maxTime, new Random(seed)),
                 new GeneticScheduleExplorer(initialSchedule, maxTime),
             };
 

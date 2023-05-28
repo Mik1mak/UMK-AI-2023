@@ -26,7 +26,7 @@ namespace Schedule
             else
                 random = rng;
             
-            Neighbourhood = maxJobsDuration / 2;
+            Neighbourhood = Math.Max(maxJobsDuration / 50, 2);
             Temperature = initialTemperature = INITIAL_TEMPERATURE_MULTIPLIER * maxJobsDuration;
             this.maxTime = maxTime;
         }
@@ -53,7 +53,7 @@ namespace Schedule
             return ScheduleGenerator.GenerateSchedule(CurrentSolution, random, Neighbourhood);
         }
 
-        private DateTime lastImprove;
+        private DateTime lastImprove = DateTime.Now;
         protected override bool ImprovesOverBest(Schedule candidateSolution)
         {
             bool result = ObjectiveFunction(candidateSolution) < ObjectiveFunction(BestSolution);
@@ -87,7 +87,7 @@ namespace Schedule
             if (now - lastImprove >= (maxTime * 5 / 6))
             {
                 lastImprove = now;
-                Temperature = initialTemperature / 5;
+                Temperature = initialTemperature;
                 Console.WriteLine("Reset Temperature");
             }
 

@@ -73,11 +73,22 @@ namespace Schedule
 
         // tworzy nowy harmonogram na podstawie istniejacego podajac zadania w losowej kolejnosci ktora uwzglednia aktualne polozenie i sasiedztwo
         public static Schedule GenerateSchedule(Schedule schedule, Random rng, int neighbourhood)
-            => GenerateSchedule(
-                schedule.Where(j => !j.HasNextJob)
-                    .OrderBy(j => j.Start + rng.Next(-neighbourhood, neighbourhood))
-                    .Select(j => Job.NewUnasignedJob(j)),
-                schedule.Processors.Length);
+        {
+            int orderIndex = 0;
+
+            var orderedJobs = schedule
+                .Where(j => !j.HasNextJob)
+                .OrderBy(j => orderIndex++ + rng.Next(-neighbourhood, neighbourhood+1))
+                .Select(j => Job.NewUnasignedJob(j));
+
+            return GenerateSchedule(orderedJobs, schedule.Processors.Length);
+        }
+
+        //=> GenerateSchedule(
+        //        schedule.Where(j => !j.HasNextJob)
+        //            .OrderBy(j => j.Start + rng.Next(-neighbourhood, neighbourhood))
+        //            .Select(j => Job.NewUnasignedJob(j)),
+        //        schedule.Processors.Length);
 
         public static Schedule GenerateSchedule(Schedule baseSchedule, int[] orders)
         {
