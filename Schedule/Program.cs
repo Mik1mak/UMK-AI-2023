@@ -92,7 +92,7 @@
                 bestSolutions.Add(explorer.Name, bestSolution);
 
             #if DEBUG
-                if (bestSolution.Validate(initialSchedule.SumOfDurations))
+                if (!bestSolution.Validate(initialSchedule.SumOfDurations))
                     throw new Exception($"Explorer {explorer} works wrong.");
             #endif
             }

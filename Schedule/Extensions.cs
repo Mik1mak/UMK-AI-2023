@@ -16,7 +16,7 @@ public static class Extensions
         foreach (Job job in schedule)
         {
             if (job.PreviousJob != null)
-                if (job.PreviousJob.End <= job.Start)
+                if (job.Start < job.PreviousJob.End)
                     return false;
 
             if (schedule.Any(j => CheckColiding(j, job)))
@@ -27,13 +27,16 @@ public static class Extensions
     }
     private static bool CheckColiding(Job a, Job b, bool firstCheck = true)
     {
+        if (a == b)
+            return false;
+
         if (a.ProcessorIndex!.Value != b.ProcessorIndex!.Value)
             return false;
 
         if (a.Start!.Value == b.Start!.Value)
             return true;
 
-        if (a.Start!.Value < b.Start!.Value && a.End < b.End)
+        if (a.Start!.Value < b.Start!.Value && b.End < a.End)
             return true;
 
         if (firstCheck)
