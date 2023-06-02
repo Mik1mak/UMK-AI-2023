@@ -36,7 +36,7 @@ internal class OnlyBetterScheduleExplorer : ISolutionExplorer<Schedule>
         int minMaxT = bestSolution.MaxTime;
         while(Duration < maxTime)
         {
-            Schedule schedule = ScheduleGenerator.GenerateSchedule(initialSchedule, rng, neighbourhood);
+            Schedule schedule = ScheduleGenerator.GenerateSchedule(bestSolution, rng, neighbourhood);
 
             if (schedule.MaxTime < minMaxT)
             {
