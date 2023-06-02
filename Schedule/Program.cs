@@ -6,9 +6,13 @@
         static void Main(string[] args)
         {
         #if DEBUG
-           args = new[] { "4", "1000", "150", "100"};
-           // args = new[] { "4", "20", "input.txt", "150", "100"};
+           args = new[] { "10", "4", "1000", "150", "100"};
+            // args = new[] { "10", "4", "20", "input.txt", "150", "100"};
         #endif
+
+            if (args.Length == 0)
+                Console.WriteLine("Usage: Program.exe {numOfTests} {numOfProcessors} {milisecondsPerExploration} {inputFile} | ({numberOfJobs} {maxJobDuration} {seed})");
+            int numOfTests = int.Parse(args.ElementAtOrDefault(0) ?? "1");
 
             var scoreTable = new Dictionary<string, int>()
             {
@@ -17,7 +21,7 @@
                 [nameof(GeneticScheduleExplorer)] = 0,
             };
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < numOfTests; i++)
                TestSolutions(args, scoreTable);
             
             Console.WriteLine();
@@ -35,12 +39,12 @@
             // odczytywanie parametrów
             IEnumerable<Job> inputJobs;
             int numberOfJobs, maxJobDuration, seed;
-            int numberOfProcessors = int.Parse(args.ElementAtOrDefault(0) ?? "4");
-            TimeSpan maxTime = TimeSpan.FromMilliseconds(int.Parse(args.ElementAtOrDefault(1) ?? "2"));
+            int numberOfProcessors = int.Parse(args.ElementAtOrDefault(1) ?? "4");
+            TimeSpan maxTime = TimeSpan.FromMilliseconds(int.Parse(args.ElementAtOrDefault(2) ?? "2"));
 
-            if (File.Exists(args.ElementAtOrDefault(2)))
+            if (File.Exists(args.ElementAtOrDefault(3)))
             {
-                // odczytywanie z danych wejściowych z pliku
+                // odczytywanie danych wejściowych z pliku
                 List<Job> jobs = ScheduleGenerator.ReadJobsFromFile(args[2]);
                 inputJobs = jobs;
                 numberOfJobs = jobs.Count;
@@ -49,9 +53,9 @@
             }
             else
             {
-                numberOfJobs = int.Parse(args.ElementAtOrDefault(2) ?? "150");
-                maxJobDuration = int.Parse(args.ElementAtOrDefault(3) ?? "100");
-                seed = int.Parse(args.ElementAtOrDefault(4) ?? Guid.NewGuid().GetHashCode().ToString());
+                numberOfJobs = int.Parse(args.ElementAtOrDefault(3) ?? "150");
+                maxJobDuration = int.Parse(args.ElementAtOrDefault(4) ?? "100");
+                seed = int.Parse(args.ElementAtOrDefault(5) ?? Guid.NewGuid().GetHashCode().ToString());
                 Random rng = new Random(seed);
 
                 // generowanie danych wejściowych

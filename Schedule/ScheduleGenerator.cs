@@ -84,12 +84,6 @@ namespace Schedule
             return GenerateSchedule(orderedJobs, schedule.Processors.Length);
         }
 
-        //=> GenerateSchedule(
-        //        schedule.Where(j => !j.HasNextJob)
-        //            .OrderBy(j => j.Start + rng.Next(-neighbourhood, neighbourhood))
-        //            .Select(j => Job.NewUnasignedJob(j)),
-        //        schedule.Processors.Length);
-
         public static Schedule GenerateSchedule(Schedule baseSchedule, int[] orders)
         {
             int orderIndex = 0;
